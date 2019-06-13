@@ -1,0 +1,61 @@
+// required for protocol buffer
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+    }
+}
+plugins {
+    id 'org.springframework.boot' version '2.1.5.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.google.protobuf' // plugin required for Protocol Buffer
+apply plugin: 'idea' // for Intellij IDEA
+
+group = 'com.az.walletclient'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'           // Spring boot starter
+    compile 'io.github.lognet:grpc-spring-boot-starter:3.3.0'               // gRPC with spring boot starter
+    compileOnly 'org.projectlombok:lombok'                                  // lombok project for fast development
+    /*developmentOnly 'org.springframework.boot:spring-boot-devtools'         // devtools for fast development no need to start again & again.*/
+    annotationProcessor 'org.projectlombok:lombok'                          // required for Intellij idea to lombok work properly
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Spring boot test environment
+}
+
+// Required for protocol buffer and gRPC for java.
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.7.1"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.21.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package com.az.wallet.server.proto;
+option java_multiple_files = true;
+
+message WalletRequest{
+    uint32 user_id = 1;     // all positive number
+    uint64 amount = 2;      // negative value not allow
+    WalletCurrency wallet_currency = 3;  // Supported currencies are EUR, USD and GBP
+}
+
+enum WalletCurrency{
+    EUR = 0;
+    USD = 1;
+    GBP = 2;
+}
+
+message WalletResponse{
+    ResponseStatus response_status=1;
+    string response_message = 2;
+    repeated WalletBalance wallet_balance = 3;             //  need to send balance in all three currency
+}
+
+service WalletServerService{
+    rpc Deposit(WalletRequest) returns (WalletResponse);      // Unary gRPC for futureStub request to server for Concurrency
+    rpc Withdraw(WalletRequest) returns (WalletResponse);     // Unary gRPC for futureStub request to server for Concurrency
+    rpc Balance(WalletRequest) returns (WalletResponse);    // Unary gRPC for futureStub request to server for Concurrency
+}
+
+
+message WalletBalance{
+    WalletCurrency wallet_currency = 1;  // Supported currencies are EUR, USD and GBP
+    uint64 balance = 2;
+}
+
+enum ResponseStatus{
+    UNKNOWN_CURRENCY = 0;
+    INSUFFICIENT_FUNDS = 1;
+    INVALID_AMOUNT = 2;
+    INVALID_USER_ID = 3;
+    DEPOSIT_SUCCESS = 4;
+    WITHDRAW_SUCCESS = 5;
+}
