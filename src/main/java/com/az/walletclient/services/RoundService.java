@@ -10,33 +10,52 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+/**
+ * @author - Azhar Mobeen
+ *
+ * Description:
+ *  =>  In this class every round from roundCount will call random round from TaskRoundService.
+ */
 @Slf4j
 @Service
 public class RoundService {
 
     private final TaskRoundService taskRoundService;
-
-    public RoundService(TaskRoundService taskRoundService) {
+    private final ResponseService responseService;
+    public RoundService(TaskRoundService taskRoundService,ResponseService responseService) {
         this.taskRoundService= taskRoundService;
+        this.responseService = responseService;
     }
 
-    public List<CompletableFuture<ListenableFuture<WalletResponse>>> callTaskRoundServiceProcessPerRound(int roundCount) {
+    /*
+        =>  In this method I'm calling randomly round methods from taskRoundService
+        =>  In return it will get List of ListenableFuture<WalletResponse>.
+    */
+    public List<CompletableFuture<ListenableFuture<WalletResponse>>> callTaskRoundServiceProcessPerRound(int roundCount) throws ExecutionException, InterruptedException {
         List<Integer> randomMethod = Arrays.asList(1,2,3);
         Random random = new Random();
         List<CompletableFuture<ListenableFuture<WalletResponse>>> list = new ArrayList<>();
 
         for(int round=1;round<=roundCount;round++) {
+            CompletableFuture<List<CompletableFuture<ListenableFuture<WalletResponse>>>> roundMethodResult = null;
             int randomIndex = random.nextInt(randomMethod.size());
             switch(randomIndex) {
                 case 0:
-                    list.addAll(taskRoundService.roundA());
+                    roundMethodResult = taskRoundService.roundA();
+                    responseService.getResponseFromServer(roundMethodResult);
+                    list.addAll(roundMethodResult.get());
                     break;
                 case 1:
-                    list.addAll(taskRoundService.roundB());
+                    roundMethodResult = taskRoundService.roundB();
+                    responseService.getResponseFromServer(roundMethodResult);
+                    list.addAll(roundMethodResult.get());
                     break;
                 case 2:
-                    list.addAll(taskRoundService.roundC());
+                    roundMethodResult = taskRoundService.roundC();
+                    responseService.getResponseFromServer(roundMethodResult);
+                    list.addAll(roundMethodResult.get());
                     break;
             }
         }

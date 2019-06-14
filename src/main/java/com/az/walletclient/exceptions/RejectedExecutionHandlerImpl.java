@@ -4,6 +4,12 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * @author - Azhar Mobeen
+ *
+ * Description:
+ *  =>  I'm catching all the thread those are rejected from queued then I'm adding again into blocking queue.
+ */
 public class RejectedExecutionHandlerImpl implements RejectedExecutionHandler {
 
     @Override

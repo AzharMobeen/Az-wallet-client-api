@@ -3,12 +3,22 @@ package com.az.walletclient.services;
 import com.az.wallet.server.proto.*;
 import com.google.common.util.concurrent.ListenableFuture;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * @author - Azhar Mobeen
+ *
+ *  Description:
+ *  =>  In this class I'm calling Actull rounds (roundA, roundB and roundC).
+ *  =>  Every round have number of transaction avg transactions are 8.
+ *  =>  I'm calling perround as Spring Boot @Async which means as a thrad.
+ *  =>  I'm returning List of ListenableFuture<WalletResponse>.
+ */
 
 @Slf4j
 @Service
@@ -29,8 +39,8 @@ public class TaskRoundService {
         =>  Get Balance
         =>  Withdraw 100 USD
     */
-
-    public List<CompletableFuture<ListenableFuture<WalletResponse>>> roundA() {
+    @Async
+    public CompletableFuture<List<CompletableFuture<ListenableFuture<WalletResponse>>>> roundA() {
         List<CompletableFuture<ListenableFuture<WalletResponse>>> list = new ArrayList<>();
         CompletableFuture<ListenableFuture<WalletResponse>> t1= transactionService.deposit(100,WalletCurrency.USD);
         CompletableFuture<ListenableFuture<WalletResponse>> t2=transactionService.withdraw(200,WalletCurrency.USD);
@@ -41,7 +51,7 @@ public class TaskRoundService {
         CompletableFuture<ListenableFuture<WalletResponse>> t7=transactionService.withdraw(100,WalletCurrency.USD);
 
         list.addAll(Arrays.asList(t1,t2,t3,t3,t4,t5,t6,t7));
-        return list;
+        return CompletableFuture.completedFuture(list);
     }
 
     /*
@@ -51,8 +61,8 @@ public class TaskRoundService {
         =>  Withdraw 100 GBP
         =>  Withdraw 100 GBP
     */
-
-    public List<CompletableFuture<ListenableFuture<WalletResponse>>> roundB() {
+    @Async
+    public CompletableFuture<List<CompletableFuture<ListenableFuture<WalletResponse>>>> roundB() {
         List<CompletableFuture<ListenableFuture<WalletResponse>>> list = new ArrayList<>();
         CompletableFuture<ListenableFuture<WalletResponse>> t1 = transactionService.withdraw(100,WalletCurrency.GBP);
         CompletableFuture<ListenableFuture<WalletResponse>> t2 = transactionService.deposit(300,WalletCurrency.GBP);
@@ -60,7 +70,7 @@ public class TaskRoundService {
         CompletableFuture<ListenableFuture<WalletResponse>> t4 = transactionService.withdraw(100,WalletCurrency.GBP);
         CompletableFuture<ListenableFuture<WalletResponse>> t5 = transactionService.withdraw(100,WalletCurrency.GBP);
         list.addAll(Arrays.asList(t1,t2,t3,t3,t4,t5));
-        return list;
+        return CompletableFuture.completedFuture(list);
     }
 
     /*
@@ -73,8 +83,8 @@ public class TaskRoundService {
         =>  Withdraw 200 USD
         =>  Get Balance
     */
-
-    public List<CompletableFuture<ListenableFuture<WalletResponse>>> roundC() {
+    @Async
+    public CompletableFuture<List<CompletableFuture<ListenableFuture<WalletResponse>>>> roundC() {
         List<CompletableFuture<ListenableFuture<WalletResponse>>> list = new ArrayList<>();
         CompletableFuture<ListenableFuture<WalletResponse>> t1= transactionService.balance();
         CompletableFuture<ListenableFuture<WalletResponse>> t2=transactionService.deposit(100,WalletCurrency.USD);
@@ -84,9 +94,8 @@ public class TaskRoundService {
         CompletableFuture<ListenableFuture<WalletResponse>> t6=transactionService.balance();
         CompletableFuture<ListenableFuture<WalletResponse>> t7=transactionService.withdraw(200,WalletCurrency.USD);
         CompletableFuture<ListenableFuture<WalletResponse>> t8= transactionService.balance();
-
         list.addAll(Arrays.asList(t1,t2,t3,t3,t4,t5,t6,t7,t8));
-        return list;
+        return CompletableFuture.completedFuture(list);
 
     }
 }

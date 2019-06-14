@@ -16,6 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * @author - Azhar Mobeen
+ *
+ *  Description:
+ *  =>  This class is actually sending evey request to GRPC server by WalletServerServiceFutureStub for concurrency.
+ *  =>  Server will send response as ListenableFuture<WalletResponse> and then I'm binding with Futures callBack methos for resoonse.
+ */
 @Slf4j
 @Service
 public class TransactionService {
@@ -29,12 +36,11 @@ public class TransactionService {
         walletServerServiceFutureStub = WalletServerServiceGrpc.newFutureStub(managedChannel);
         this.taskExecutor = taskExecutor;
     }
+
     @Async
     public CompletableFuture<ListenableFuture<WalletResponse>> withdraw(long amount, WalletCurrency walletCurrency) {
         WalletRequest walletRequest = WalletRequest.newBuilder().setUserId(1).setAmount(amount).setWalletCurrency(walletCurrency).build();
         log.info("Sending request to server ");
-        WalletResponse result = null;
-        /*try {*/
         ListenableFuture<WalletResponse> walletResponse = walletServerServiceFutureStub.withdraw(walletRequest);
 
         Futures.addCallback(walletResponse, new FutureCallback<WalletResponse>() {
@@ -50,14 +56,6 @@ public class TransactionService {
                     log.warn("Error in Withdraw Transaction Response {}",ResponseStatus.INSUFFICIENT_FUNDS);
             }
         },taskExecutor);
-
-
-        /*}catch (ExecutionException e){
-            log.info("Server Response {}",e.getMessage());
-
-        } catch (InterruptedException e) {
-            log.error("ExecutionException ",e);
-        }*/
         return CompletableFuture.completedFuture(walletResponse);
     }
 
@@ -66,7 +64,7 @@ public class TransactionService {
         WalletRequest walletRequest = WalletRequest.newBuilder().setUserId(1).setAmount(amount).setWalletCurrency(walletCurrency).build();
         log.info("Sending request to server ");
         ListenableFuture<WalletResponse> walletResponse = walletServerServiceFutureStub.deposit(walletRequest);
-        /*try {*/
+
         Futures.addCallback(walletResponse, new FutureCallback<WalletResponse>() {
             @Override
             public void onSuccess(@NullableDecl WalletResponse result) {
@@ -79,11 +77,6 @@ public class TransactionService {
                 log.error("Error in Deposit Transaction message {} status {}",statusRuntimeException.getMessage(),statusRuntimeException.getStatus().getDescription());
             }
         },taskExecutor);
-
-/*            result = walletResponse.get();
-        }catch (ExecutionException | InterruptedException e){
-            log.error("InterruptedException ",e);
-        }*/
         return CompletableFuture.completedFuture(walletResponse);
     }
 
@@ -92,8 +85,6 @@ public class TransactionService {
         log.info("Sending request to server");
         WalletRequest walletRequest = WalletRequest.newBuilder().setUserId(1).build();
         ListenableFuture<WalletResponse> walletResponse = walletServerServiceFutureStub.balance(walletRequest);
-
-        /*try {*/
 
             Futures.addCallback(walletResponse, new FutureCallback<WalletResponse>() {
                 @Override
@@ -112,14 +103,6 @@ public class TransactionService {
                     log.error("Error In Balance Transaction message {} status {}", statusRuntimeException.getMessage(), statusRuntimeException.getStatus().getDescription());
                 }
             },taskExecutor);
-
-          /*  result =   balanceResponse.get();
-        }catch (ExecutionException e){
-            log.error("ExecutionException occurs",e);
-
-        } catch (InterruptedException e) {
-            log.error("InterruptedException ",e);
-        }*/
         return CompletableFuture.completedFuture(walletResponse);
     }
 }

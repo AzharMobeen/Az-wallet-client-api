@@ -33,6 +33,7 @@ public class AzWalletClientApplication {
         threadPoolTaskExecutor.setCorePoolSize(4);
         threadPoolTaskExecutor.setQueueCapacity(500);
         threadPoolTaskExecutor.setThreadNamePrefix("threadPoolExecutor-");
+        //threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         threadPoolTaskExecutor.setRejectedExecutionHandler(new RejectedExecutionHandlerImpl());
         threadPoolTaskExecutor.initialize();
         return threadPoolTaskExecutor;
