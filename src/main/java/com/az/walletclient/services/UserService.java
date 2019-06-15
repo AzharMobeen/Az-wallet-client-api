@@ -39,4 +39,13 @@ public class UserService {
         }
         return list;
     }
+
+    public int callTaskRoundServiceProcessPerUser_v2(int userCount, int requestCount, int roundCount) throws ExecutionException, InterruptedException {
+
+        int totalTransactionsPerUser = 0;
+        for(int user= 1; user<=userCount;user++) {
+            totalTransactionsPerUser += requestService.callTaskRoundServiceProcessPerRequest_v2(requestCount,roundCount).get();
+        }
+        return totalTransactionsPerUser;
+    }
 }

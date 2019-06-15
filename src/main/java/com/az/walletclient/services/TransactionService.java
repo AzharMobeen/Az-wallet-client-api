@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class TransactionService {
 
-
+    // Spring Boot SimpleAsyncTaskExecutor will call.
     private TaskExecutor taskExecutor;
     private final WalletServerServiceGrpc.WalletServerServiceFutureStub walletServerServiceFutureStub;
     public TransactionService(@Qualifier("taskExecutor") TaskExecutor taskExecutor){
@@ -94,7 +94,6 @@ public class TransactionService {
                         result.getWalletBalanceList().forEach(walletBalance ->
                                 log.info("UserWalletBalance {}",walletBalance)
                         );
-
                 }
 
                 @Override

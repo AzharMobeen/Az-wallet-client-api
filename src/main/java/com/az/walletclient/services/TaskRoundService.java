@@ -69,6 +69,7 @@ public class TaskRoundService {
         CompletableFuture<ListenableFuture<WalletResponse>> t3 = transactionService.withdraw(100,WalletCurrency.GBP);
         CompletableFuture<ListenableFuture<WalletResponse>> t4 = transactionService.withdraw(100,WalletCurrency.GBP);
         CompletableFuture<ListenableFuture<WalletResponse>> t5 = transactionService.withdraw(100,WalletCurrency.GBP);
+
         list.addAll(Arrays.asList(t1,t2,t3,t3,t4,t5));
         return CompletableFuture.completedFuture(list);
     }

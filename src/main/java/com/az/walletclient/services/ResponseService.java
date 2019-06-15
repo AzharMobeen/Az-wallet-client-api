@@ -11,11 +11,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author - Azhar Mobeen
+ *
+ *  Description:
+ *  =>  I'm using this class for v2 Methods where
+ */
 @Slf4j
 @Service
 public class ResponseService {
-
 
     /*
         =>  It's a static method called just after getting list of ListenableFuture<WalletResponse>
@@ -32,7 +38,7 @@ public class ResponseService {
     }
 
     @Async
-    public void getResponseFromServer(CompletableFuture<List<CompletableFuture<ListenableFuture<WalletResponse>>>> walletResponse){
+    public void getResponseFromServer_v2(CompletableFuture<List<CompletableFuture<ListenableFuture<WalletResponse>>>> walletResponse){
 
         try {
             List<CompletableFuture<ListenableFuture<WalletResponse>>> list = walletResponse.get();
